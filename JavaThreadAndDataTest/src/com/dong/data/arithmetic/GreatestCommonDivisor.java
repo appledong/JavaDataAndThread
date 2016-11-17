@@ -15,7 +15,6 @@ public class GreatestCommonDivisor {
 			int rem = m % n;
 			m = n;
 			n = rem;
-			
 		}
 		return m;
 	}
