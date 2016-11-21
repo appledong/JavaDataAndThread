@@ -1,8 +1,14 @@
-package com.dong.thread.cacel;
+package com.dong.thread.cancel;
 
+import java.io.InputStream;
+import java.net.Socket;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class DelayRunnable {
 
@@ -66,6 +72,24 @@ public class DelayRunnable {
 			e.printStackTrace();
 		}
 		rethrowRunnable.reThrow();
+	}
+	
+	private final ExecutorService executorService3 = Executors
+			.newFixedThreadPool(4);
+	
+	public void timeRunning3(Runnable task, long time, TimeUnit timeUnit) {
+		Future f = executorService3.submit(task);
+		try {
+			f.get(time, timeUnit);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		} finally{
+			f.cancel(true);
+		}
 	}
 
 }

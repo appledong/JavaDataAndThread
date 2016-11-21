@@ -1,27 +1,17 @@
-package com.dong.thread.cacel;
+package com.dong.thread.cancel;
 
 import java.math.BigInteger;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class PrimeGeneratorBlockingQueue implements Runnable {
+public class fixedPrimeGeneratorBlockingQueue implements Runnable {
 
 	private final BlockingQueue<BigInteger> blockingQueue = new LinkedBlockingQueue<>();
-
-	/**
-	 * 通过布尔值标识符实现线程间的中断协作机制
-	 */
-	private volatile boolean cancel = false;
-
-	public void setCancel() {
-		cancel = true;
-		System.out.println("setCancel: " + System.nanoTime());
-	}
 
 	@Override
 	public void run() {
 		BigInteger p = BigInteger.ONE;
-		while (!cancel) {
+		while (!Thread.currentThread().isInterrupted()) {
 			p = p.nextProbablePrime();
 			synchronized (this) {
 				/***
@@ -44,8 +34,8 @@ public class PrimeGeneratorBlockingQueue implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		PrimeGeneratorBlockingQueue pg = new PrimeGeneratorBlockingQueue();
-		new Thread(pg).start();
+		fixedPrimeGeneratorBlockingQueue pg = new fixedPrimeGeneratorBlockingQueue();
+		Thread thread = new Thread(pg);
 		try {
 			try {
 				consume(pg.get().take());
@@ -53,7 +43,11 @@ public class PrimeGeneratorBlockingQueue implements Runnable {
 				e.printStackTrace();
 			}
 		} finally {
-			pg.setCancel();
+			/**
+			 * 特别注意thread的interrupt会触发
+			 * BlockingQueue的InterruptedException异常
+			 */
+			thread.interrupt();
 		}
 	}
 
