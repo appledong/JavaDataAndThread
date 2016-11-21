@@ -1,4 +1,4 @@
-package com.dong.thread.cache;
+package com.dong.thread.cacel;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -32,7 +32,7 @@ public class ResponseInterrupted {
 			 * 此时把线程的中断请求恢复让其在finally中再次中断将中断异常
 			 * 交给方法的调用者，让调用者去处理
 			 */
-			Thread.currentThread().interrupted();
+			Thread.interrupted();
 			e.printStackTrace();
 		} finally {
 			if (interrupted) {
