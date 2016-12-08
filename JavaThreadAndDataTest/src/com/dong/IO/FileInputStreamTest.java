@@ -1,9 +1,9 @@
 package com.dong.IO;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileInputStreamTest {
@@ -71,7 +71,7 @@ public class FileInputStreamTest {
 	}
 
 	/**
-	 * 换行写
+	 * 读取未知文件大小:针对的是已知大小不会超过初始化数组的大小
 	 */
 	public void read3() {
 		try {
@@ -92,12 +92,35 @@ public class FileInputStreamTest {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 读取未知文件大小:针对的是已知大小超过初始化数组的大小
+	 * 此时借助bytearrayoutstream实现
+	 */
+	public void read4() {
+		try {
+			FileInputStream fileInputStream = new FileInputStream(file);
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			byte[] b = new byte[10];
+			try {
+				while (fileInputStream.read(b) != -1) {
+					outputStream.write(b);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("未知文件大小(超过给定数组时)读出文件中的文本是：" + new String(outputStream.toByteArray()));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void main(String[] args) {
 		FileInputStreamTest fileOutputStream = new FileInputStreamTest();
 		fileOutputStream.readBytes();
 		fileOutputStream.read2();
 		fileOutputStream.read3();
+		fileOutputStream.read4();
 	}
 
 }
